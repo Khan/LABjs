@@ -13,6 +13,7 @@
 		_CacheBust = "CacheBust",
 		/*!START_DEBUG*/_Debug = "Debug",/*!END_DEBUG*/
 		_BasePath = "BasePath",
+		_ErrorHandler = "ErrorHandler",
 		
 		// stateless variables used across all $LAB instances
 		root_page = /^[^?#]*\//.exec(location.href)[0],
@@ -208,6 +209,7 @@
 		global_defaults[_CacheBust] = false;
 		/*!START_DEBUG*/global_defaults[_Debug] = false;/*!END_DEBUG*/
 		global_defaults[_BasePath] = "";
+		global_defaults[_ErrorHandler] = function() {};
 
 		// execute a script that has been preloaded already
 		function execute_preloaded_script(chain_opts,script_obj,registry_item) {
@@ -341,6 +343,7 @@
 					if (is_func(chain[exec_cursor])) {
 						/*!START_DEBUG*/if (chain_opts[_Debug]) log_msg("$LAB.wait() executing: "+chain[exec_cursor]);/*!END_DEBUG*/
 						try { chain[exec_cursor++](); } catch (err) {
+							chain_opts[_ErrorHandler](err);
 							/*!START_DEBUG*/if (chain_opts[_Debug]) log_error("$LAB.wait() error caught: ",err);/*!END_DEBUG*/
 						}
 						continue;
